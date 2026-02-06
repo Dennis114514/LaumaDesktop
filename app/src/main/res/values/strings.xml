@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">LaumaDesktop</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_welcome">Welcome</string>
+    <string name="title_activity_permission_application">PermissionApplication</string>
+    <string name="title_activity_permission_application_special">PermissionApplicationSpecial
+    </string>
+    <string name="title_activity_contact_settings_guide">ContactSettingsGuide</string>
+    <string name="title_activity_app_choise">AppChoise</string>
+    <string name="title_activity_end_guide">EndGuide</string>
+    <string name="title_activity_application">Application</string>
+    <string name="title_activity_use">Use</string>
+    <string name="title_activity_accessibility_open_qq">AccessibilityOpenQQ</string>
 </resources>
