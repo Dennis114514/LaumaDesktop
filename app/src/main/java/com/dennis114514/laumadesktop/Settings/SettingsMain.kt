@@ -1,5 +1,5 @@
-package com.dennis114514.ShizukuAccessibilityPermission
-//申请shizuku权限
+package com.dennis114514.laumadesktop.Settings
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,9 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.dennis114514.ShizukuAccessibilityPermission.ui.theme.LaumaDesktopTheme
+import com.dennis114514.laumadesktop.Settings.ui.theme.LaumaDesktopTheme
 
-class Application : ComponentActivity() {
+class SettingsMain : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

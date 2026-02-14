@@ -1,4 +1,4 @@
-package com.dennis114514.ShizukuAccessibilityPermission.ui.theme
+package com.dennis114514.laumadesktop.Settings.ui.theme
 
 import android.app.Activity
 import android.os.Build

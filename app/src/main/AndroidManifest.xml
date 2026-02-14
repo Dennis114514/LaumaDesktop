@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
+    <!-- 存储权限 -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" /> <!-- For Android 13+ (API 33+) -->
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <!-- 应用列表权限 -->
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+    <!-- 电话权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <!-- 悬浮窗权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 网络状态权限 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,23 +38,48 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LaumaDesktop">
         <activity
+            android:name=".Settings.SettingsMain"
+            android:exported="false"
+            android:label="@string/title_activity_settings_main"
+            android:theme="@style/Theme.LaumaDesktop" />
+        <activity
+            android:name=".FirstUseGuide.AccessibilityManagerGuide"
+            android:exported="false"
+            android:label="@string/title_activity_accessibility_manager_guide"
+            android:theme="@style/Theme.LaumaDesktop" />
+        <activity
+            android:name=".FirstUseGuide.InitializeProvider"
+            android:exported="false"
+            android:label="@string/title_activity_initialize_provider"
+            android:theme="@style/Theme.LaumaDesktop" />
+
+        <!-- 无障碍服务声明 -->
+        <service
+            android:name="com.dennis114514.VideoCallProvider.BaseAccessibilityService"
+            android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <activity
+            android:name=".FirstUseGuide.AppDownload"
+            android:exported="false"
+            android:label="@string/title_activity_app_download"
+            android:theme="@style/Theme.LaumaDesktop" />
+        <activity
             android:name="com.dennis114514.VideoCallProvider.AccessibilityOpenQQ"
             android:exported="false"
             android:label="@string/title_activity_accessibility_open_qq"
             android:theme="@style/Theme.LaumaDesktop" />
         <activity
-            android:name="com.dennis114514.ShizukuAccessibilityPermission.Use"
-            android:exported="false"
-            android:label="@string/title_activity_use"
-            android:theme="@style/Theme.LaumaDesktop" />
-        <activity
-            android:name="com.dennis114514.ShizukuAccessibilityPermission.Application"
-            android:exported="false"
-            android:label="@string/title_activity_application"
-            android:theme="@style/Theme.LaumaDesktop" />
-        <activity
             android:name=".FirstUseGuide.EndGuide"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_end_guide"
             android:theme="@style/Theme.LaumaDesktop" />
         <activity
@@ -47,18 +93,13 @@
             android:label="@string/title_activity_contact_settings_guide"
             android:theme="@style/Theme.LaumaDesktop" />
         <activity
-            android:name=".FirstUseGuide.PermissionApplicationSpecial"
-            android:exported="false"
-            android:label="@string/title_activity_permission_application_special"
-            android:theme="@style/Theme.LaumaDesktop" />
-        <activity
             android:name=".FirstUseGuide.PermissionApplication"
             android:exported="false"
             android:label="@string/title_activity_permission_application"
             android:theme="@style/Theme.LaumaDesktop" />
         <activity
             android:name=".FirstUseGuide.Welcome"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_welcome"
             android:theme="@style/Theme.LaumaDesktop" />
         <activity
@@ -72,6 +113,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- FileProvider 配置 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

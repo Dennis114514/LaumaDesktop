@@ -11,4 +11,11 @@
     <string name="title_activity_application">Application</string>
     <string name="title_activity_use">Use</string>
     <string name="title_activity_accessibility_open_qq">AccessibilityOpenQQ</string>
+    <string name="title_activity_app_download">AppDownload</string>
+    <string name="title_activity_accessibility_service">AccessibilityService</string>
+    <string name="title_activity_initialize_provider">InitializeProvider</string>
+    <string name="title_activity_accessibility_manager_guide">AccessibilityManagerGuide</string>
+    <string name="title_activity_password_setting">PasswordSetting</string>
+    <string name="accessibility_service_description">LaumaDesktop 无障碍服务，用于自动化操作和辅助功能</string>
+    <string name="title_activity_settings_main">SettingsMain</string>
 </resources>
