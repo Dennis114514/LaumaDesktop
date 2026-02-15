@@ -14,6 +14,7 @@ This file is encoded in UTF-8
 （所有信息要填在引号""内）
 
 Tip：可以使用MT管理器的批量重命名功能对大量图片进行管理
+请将图片裁剪成1:1的大小（正方形）以显示完整图片
 
 每个花括号{}括起来的项目为1组联系人信息
 在内置示例文件中有四组空信息，可以根据实际需求自行增删（复制粘贴），每组数据之间用英文逗号,分隔（即在花括号}后面加一个逗号,，但最后一组数据不要加。）
@@ -46,6 +47,7 @@ You will see content similar to the following (you can use pinch-to-zoom gesture
 (All information must be entered within the quotation marks "")
 
 Tip: You can use MT Manager's batch renaming feature to efficiently manage a large number of images.
+Please cut the image to the size of 1:1(Square) to make the display complete
 
 Each set of contact information is enclosed in curly braces {}.
 The built-in example file contains four empty contact entries. You may add or remove entries as needed (via copy-paste). Separate each entry with an English comma , (i.e., add a comma after the closing brace }, except after the last entry).
