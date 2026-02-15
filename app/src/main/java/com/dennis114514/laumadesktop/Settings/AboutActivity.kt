@@ -143,7 +143,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
             
             // 应用介绍
             Text(
-                text = "LaumaDesktop是一个专门为无法使用手机的老人制做的软件，旨在为他们能够使用智能手机进行基本的通信和娱乐。\n视频通话功能尚未实装，敬您期待",
+                text = "版本1.0(1)\nLaumaDesktop是一个专门为无法使用手机的老人制做的软件，旨在为他们能够使用智能手机进行基本的通信和娱乐。\n视频通话功能尚未实装，敬您期待",
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
                 textAlign = TextAlign.Start,
