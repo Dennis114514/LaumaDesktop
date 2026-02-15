@@ -41,7 +41,7 @@ A：
 • 如果您已经把LaumaDesktop设置为默认桌面，可下拉通知栏，通过系统提供的快捷按钮打开“设置”应用，然后把默认启动器改回原来的桌面或者卸载本应用，改回正确的配置即可  
 
 Q：不慎删除了README.txt文件，不会编辑了怎么办？  
-A：您可以打开[https://github.com/Dennis114514/LaumaDesktop/blob/master/app/src/main/assets/README.txt]获取此文件   
+A：您可以打开[https://github.com/Dennis114514/LaumaDesktop/blob/master/app/src/main/assets/README.txt](https://github.com/Dennis114514/LaumaDesktop/blob/master/app/src/main/assets/README.txt)获取此文件  
 
 Q：想打开更多的应用怎么办？  
 A：点击应用右上角的“设置”，点击“全部应用”，即可查看系统安装的所有应用，点击即可打开，长按可以查看详情或卸载。  
