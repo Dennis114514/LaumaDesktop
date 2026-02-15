@@ -57,9 +57,8 @@ fun ContactSettingsScreen(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // 示例文本
         Text(
-            text = "示例文本",
+            text = "请点击下面的按钮，在弹出的窗口中选择MT管理器的”定位到文件位置“，先阅读文件夹中的README.txt文件，然后按照提示进行配置",
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier

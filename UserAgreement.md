@@ -52,4 +52,4 @@ a)获取农历日期
 ## 七、联系我们  
 源代码仓库：https://github.com/Dennis114514/LaumaDesktop  
 问题反馈：通过GitHub Issues提交  
-版权声明：© 2026 [Dennis114514]. 保留部分权利（依据GPLv3）。  
+版权声明：© 2026 Dennis114514. 保留部分权利。  

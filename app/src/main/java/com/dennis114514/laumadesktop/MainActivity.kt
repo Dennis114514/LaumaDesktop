@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -103,7 +102,7 @@ fun MainScreen() {
 
     if (contacts.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "未找到联系人信息")
+            Text(text = "未找到联系人信息\n如果因操作不当导致手机无法使用，请下拉通知栏，使用系统提供的快捷按钮打开“设置”应用，卸载本软件")
         }
         return
     }
@@ -127,11 +126,11 @@ fun MainScreen() {
             modifier = Modifier.fillMaxSize(),
             containerColor = Color.Transparent,
             contentWindowInsets = WindowInsets(0, 0, 0, 0)
-        ) { innerPadding -> // 修改点：给参数命名
+        ) { innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding) // 修改点：应用 PaddingValues 修复报错
+                    .padding(innerPadding)
             ) {
                 // 1. 顶部栏
                 TopActionBar(
@@ -213,7 +212,7 @@ fun MainScreen() {
                             }
                             Spacer(modifier = Modifier.width(48.dp))
                             IconButton(
-                                onClick = { /* 视频通话占位 */ },
+                                onClick = { Toast.makeText(context, "未完工", Toast.LENGTH_SHORT).show() },//TODO：实装视频通话功能
                                 modifier = Modifier.size(72.dp).clip(CircleShape).background(Color(0xFF2196F3))
                             ) {
                                 Icon(Icons.Default.PlayArrow, "视频", tint = Color.White, modifier = Modifier.size(36.dp))

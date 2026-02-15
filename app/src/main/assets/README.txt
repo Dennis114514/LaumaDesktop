@@ -24,6 +24,9 @@ Tip：可以使用MT管理器的批量重命名功能对大量图片进行管理
 每组数据必须在花括号{}内，所有数据需要在方括号[]内，称为一个数组。
 （中文与英文内容相同）
 
+注意：请务必在联系人信息配置无误，软件可以正常使用之后，再把本软件设置为默认启动器！
+如果不慎导致手机无法使用，请下拉通知栏，通过系统提供的快捷按钮转到“设置”应用，然后卸载本软件！
+
 
 
 
@@ -53,3 +56,6 @@ Values wrapped in quotation marks "" are strings—this application only require
 The text before each colon : acts as a "key" that the app reads; the text after the colon is the "value" assigned to that key.
 For readability, it is customary to include a single space after each colon.
 All individual contact objects must be placed within curly braces {}, and the entire collection must be wrapped in square brackets [], forming a JSON array.
+
+ATTENTION:Please set this app as a default launcher AFTER THE CONTACT INFORMATION IS NOT WRONG and the app can work properly.
+If your phone becomes unusable by mistake, please pull down the notification bar, use the shortcut button provided by the system to go to the 'Settings' app, and then uninstall this software!

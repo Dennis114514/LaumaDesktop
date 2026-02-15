@@ -150,8 +150,9 @@ class InitializeProvider : ComponentActivity() {
                 
                 val settingsFile = File(laumaDesktopDir, "Settings.json")
                 val contactInfoFile = File(laumaDesktopDir, "ContractInformation.json")
+                val readmeFile = File(laumaDesktopDir, "README.txt")
                 
-                if (!settingsFile.exists() || !contactInfoFile.exists()) {
+                if (!settingsFile.exists() || !contactInfoFile.exists() || !readmeFile.exists()) {
                     updateProgress(0.8f, "复制配置文件...")
                     
                     // 先复制Settings.json
@@ -170,7 +171,7 @@ class InitializeProvider : ComponentActivity() {
                         println("Assets文件列表: ${assetFiles?.joinToString(", ")}")
                         
                         copyAssetFile("ContractInformation.json", contactInfoFile)
-                        updateProgress(0.9f, "ContractInformation.json复制完成")
+                        updateProgress(0.87f, "ContractInformation.json复制完成")
                         Thread.sleep(300)
                         
                         // 验证复制结果
@@ -181,6 +182,24 @@ class InitializeProvider : ComponentActivity() {
                         }
                     } catch (e: Exception) {
                         val errorMsg = "复制ContractInformation.json失败: ${e.message}"
+                        println(errorMsg)
+                        throw Exception(errorMsg)
+                    }
+                    
+                    // 复制README.txt
+                    try {
+                        copyAssetFile("README.txt", readmeFile)
+                        updateProgress(0.9f, "README.txt复制完成")
+                        Thread.sleep(300)
+                        
+                        // 验证复制结果
+                        if (readmeFile.exists()) {
+                            println("README.txt文件已创建，大小: ${readmeFile.length()} 字节")
+                        } else {
+                            throw Exception("README文件未成功创建")
+                        }
+                    } catch (e: Exception) {
+                        val errorMsg = "复制README.txt失败: ${e.message}"
                         println(errorMsg)
                         throw Exception(errorMsg)
                     }
@@ -294,12 +313,14 @@ class InitializeProvider : ComponentActivity() {
         val audiosDir = File(baseDir, "Audios")
         val settingsFile = File(baseDir, "Settings.json")
         val contactInfoFile = File(baseDir, "ContractInformation.json")
-        
+        val readmeFile = File(baseDir, "README.txt")
+                        
         return baseDir.exists() && 
                imagesDir.exists() && imagesDir.isDirectory &&
                audiosDir.exists() && audiosDir.isDirectory &&
                settingsFile.exists() && settingsFile.isFile &&
-               contactInfoFile.exists() && contactInfoFile.isFile
+               contactInfoFile.exists() && contactInfoFile.isFile &&
+               readmeFile.exists() && readmeFile.isFile
     }
     
     /**
@@ -439,7 +460,7 @@ fun InitializationScreen(
                 Text(
                     text = "• 在Download目录创建LaumaDesktop文件夹\n" +
                            "• 创建Images和Audios子目录\n" +
-                           "• 复制Settings.json和ContractInformation.json配置文件\n" +
+                           "• 复制Settings.json和ContractInformation.json配置文件，以及README.txt文档\n" +
                            "• 准备应用运行所需的基础环境",
                     style = MaterialTheme.typography.bodyMedium,
                     lineHeight = 20.sp

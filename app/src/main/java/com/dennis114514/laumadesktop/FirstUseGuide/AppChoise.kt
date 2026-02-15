@@ -3,14 +3,12 @@ package com.dennis114514.laumadesktop.FirstUseGuide
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,16 +38,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.dennis114514.laumadesktop.FirstUseGuide.ui.theme.LaumaDesktopTheme
 import com.dennis114514.laumadesktop.JsonConfigUtil
@@ -79,7 +74,6 @@ class AppChoise : ComponentActivity() {
 
 /**
  * 可安装应用信息数据类
- * 避免与已有AppInfo类名冲突
  */
 data class InstalledAppInfo(
     val appName: String,
@@ -177,7 +171,7 @@ fun DesktopAppSelection(
         
         // 说明文字
         Text(
-            text = "请选择您希望在桌面上显示的应用程序",
+            text = "请选择您希望在桌面上可以打开的应用程序\n这些应用将在桌面左上角的抽屉中显示。",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -249,7 +243,7 @@ fun TvAppSelection(
         
         // 说明文本
         Text(
-            text = "请选择您常用的视频播放或电视应用，该应用将在特定场景下被快速启动",
+            text = "请选择您常用的视频播放或电视应用，该应用将可以通过点击主页面上的时间来快速启动。",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

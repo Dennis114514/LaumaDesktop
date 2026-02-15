@@ -10,24 +10,23 @@
         android:maxSdkVersion="29" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-    <!-- 应用列表权限 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" /> <!-- 应用列表权限 -->
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
-        tools:ignore="QueryAllPackagesPermission" />
-    <!-- 电话权限 -->
+        tools:ignore="QueryAllPackagesPermission" /> <!-- 电话权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <!-- 悬浮窗权限 -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <!-- 网络权限 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 网络状态权限 -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" /> <!-- 悬浮窗权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 网络权限 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 网络状态权限 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-        
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -37,6 +36,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LaumaDesktop">
+        <activity
+            android:name=".Settings.ContractSettings"
+            android:exported="false"
+            android:label="@string/title_activity_contract_settings"
+            android:theme="@style/Theme.LaumaDesktop" />
+        <activity
+            android:name=".Settings.QuickStartSet"
+            android:exported="false"
+            android:label="@string/title_activity_quick_start_set"
+            android:theme="@style/Theme.LaumaDesktop" />
+        <activity
+            android:name=".Settings.ListAppsSet"
+            android:exported="false"
+            android:label="@string/title_activity_list_apps_set"
+            android:theme="@style/Theme.LaumaDesktop" />
+        <activity
+            android:name=".Settings.SetLauncher"
+            android:exported="false"
+            android:label="@string/title_activity_set_launcher"
+            android:theme="@style/Theme.LaumaDesktop" />
+        <activity
+            android:name=".Settings.AllAppsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_all_apps"
+            android:theme="@style/Theme.LaumaDesktop" />
+        <activity
+            android:name=".Settings.AboutActivity"
+            android:exported="false"
+            android:label="@string/title_activity_about"
+            android:theme="@style/Theme.LaumaDesktop" />
         <activity
             android:name=".Settings.SettingsMain"
             android:exported="false"
@@ -51,9 +80,7 @@
             android:name=".FirstUseGuide.InitializeProvider"
             android:exported="false"
             android:label="@string/title_activity_initialize_provider"
-            android:theme="@style/Theme.LaumaDesktop" />
-
-        <!-- 无障碍服务声明 -->
+            android:theme="@style/Theme.LaumaDesktop" /> <!-- 无障碍服务声明 -->
         <service
             android:name="com.dennis114514.VideoCallProvider.BaseAccessibilityService"
             android:exported="false"
@@ -105,16 +132,19 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/title_activity_main"
+            android:label="@string/app_name"
             android:theme="@style/Theme.LaumaDesktop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- FileProvider 配置 -->
+            <!-- 启动器intent filter - 允许设置为默认桌面 -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity> <!-- FileProvider 配置 -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

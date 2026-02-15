@@ -95,7 +95,7 @@ fun AppDownloadScreen(
                 name = "AccessibilityManager",
                 purpose = "用于方便地启动无障碍服务",
                 downloadLinks = listOf(
-                    LinkInfo("Github", "https://github.com/Dennis114514/AccessibilityManager")
+                    LinkInfo("Github(fork非官方，官方没有Release)", "https://github.com/Dennis114514/AccessibilityManager/releases")
                 )
             ),
             AppInfo(

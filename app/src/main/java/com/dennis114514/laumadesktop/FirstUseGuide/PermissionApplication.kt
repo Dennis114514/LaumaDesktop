@@ -22,10 +22,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -745,13 +743,13 @@ fun PermissionApplicationPreview() {
             )
             
             // 说明文本
-            Text(//TODO：替换为实际内容
+            Text(
                 text = "为了应用正常运行，需要您授予以下权限：\n\n" +
-                      "• 文件访问权限：通过系统文件选择器授权访问\n" +
-                      "• 应用列表权限：获取已安装应用信息\n" +
+                      "• 文件访问权限：通过系统文件选择器授权访问（Android11+）或者获取传统的文件访问权限（Android6-10）\n" +
+                      "• 应用列表权限：获取已安装应用信息（作为一个桌面，这个肯定要有吧）\n" +
                       "• 电话权限：拨打电话\n" +
-                      "• 短信权限：读取短信\n" +
-                      "• 悬浮窗权限：在其他应用上层显示内容",
+                      "• 短信权限：读取短信，用于实现远程控制功能（此功能由你自己启用，只有你和接收者才能看到短信内容）\n免责声明：你的运营商也可能看到短信内容\n                  收发短信可能会产生费用\n" +
+                      "• 悬浮窗权限：在其他应用上层显示内容，用于实现快捷返回功能",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(bottom = 32.dp)
             )

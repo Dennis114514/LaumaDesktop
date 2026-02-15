@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -152,7 +151,7 @@ fun AccessibilityManagerGuideScreen(
                     modifier = Modifier.padding(24.dp)
                 ) {
                     Text(
-                        text = "请打开AccessibilityManager，按该应用内的提示操作",
+                        text = "请打开AccessibilityManager，按该应用内的提示操作\n无障碍权限将用于自动操作视频通话\n你可以暂时关闭此应用",
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center
                     )

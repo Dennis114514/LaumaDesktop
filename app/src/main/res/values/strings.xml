@@ -18,4 +18,10 @@
     <string name="title_activity_password_setting">PasswordSetting</string>
     <string name="accessibility_service_description">LaumaDesktop 无障碍服务，用于自动化操作和辅助功能</string>
     <string name="title_activity_settings_main">SettingsMain</string>
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="title_activity_all_apps">AllAppsActivity</string>
+    <string name="title_activity_set_launcher">SetLauncher</string>
+    <string name="title_activity_list_apps_set">ListAppsSet</string>
+    <string name="title_activity_quick_start_set">QuickStartSet</string>
+    <string name="title_activity_contract_settings">ContractSettings</string>
 </resources>
