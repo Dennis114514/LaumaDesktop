@@ -47,7 +47,6 @@ object JsonConfigUtil {
                 null
             }
         } catch (e: Exception) {
-            e.printStackTrace()
             null
         }
     }
@@ -76,7 +75,6 @@ object JsonConfigUtil {
             
             true
         } catch (e: Exception) {
-            e.printStackTrace()
             false
         }
     }

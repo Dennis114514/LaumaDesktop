@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import android.util.Log
 import com.dennis114514.laumadesktop.FirstUseGuide.ui.theme.LaumaDesktopTheme
 
 class PermissionApplication : ComponentActivity() {
@@ -81,11 +80,9 @@ class PermissionApplication : ComponentActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (Settings.canDrawOverlays(this)) {
-            Log.d("PermissionCheck", "悬浮窗权限已授予")
             // 注意：这里不增加grantedPermissionsCount，因为checkAllPermissions会重新计算
             checkNextPermission()
         } else {
-            Log.d("PermissionCheck", "悬浮窗权限被拒绝")
             showPermissionDeniedDialog("悬浮窗权限")
         }
     }
@@ -103,16 +100,14 @@ class PermissionApplication : ComponentActivity() {
                         treeUri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                     )
-                    Log.d("PermissionCheck", "SAF权限已保存: $treeUri")
                 } catch (e: Exception) {
-                    Log.e("PermissionCheck", "保存SAF权限失败: ${e.message}")
+                    // 忽略保存权限失败
                 }
                 // 强制重新检查所有权限状态
                 checkAllPermissions()
                 checkNextPermission()
             }
         } else {
-            Log.d("PermissionCheck", "SAF权限申请被拒绝或取消")
             showPermissionDeniedDialog("文件访问权限")
         }
     }
@@ -145,18 +140,15 @@ class PermissionApplication : ComponentActivity() {
         val runnable = object : Runnable {
             override fun run() {
                 if (!isAllPermissionsGranted) {
-                    Log.d("PermissionCheck", "执行周期性权限检查")
                     checkAllPermissions()
                     // 继续周期性检查
                     periodicCheckHandler?.postDelayed(this, PERIODIC_CHECK_INTERVAL)
                 } else {
-                    Log.d("PermissionCheck", "所有权限已获得，停止周期性检查")
                     stopPeriodicPermissionCheck()
                 }
             }
         }
         periodicCheckHandler?.postDelayed(runnable, PERIODIC_CHECK_INTERVAL)
-        Log.d("PermissionCheck", "启动周期性权限检查")
     }
     
     /**
@@ -165,7 +157,6 @@ class PermissionApplication : ComponentActivity() {
     private fun stopPeriodicPermissionCheck() {
         periodicCheckHandler?.removeCallbacksAndMessages(null)
         periodicCheckHandler = null
-        Log.d("PermissionCheck", "停止周期性权限检查")
     }
     
     /**
@@ -178,7 +169,6 @@ class PermissionApplication : ComponentActivity() {
         
         // 如果任一权限已获得，则不需要申请
         val result = !(hasTraditionalPermission || hasSAFPermission)
-        Log.d("PermissionCheck", "是否需要申请存储权限: $result (传统: $hasTraditionalPermission, SAF: $hasSAFPermission)")
         
         return result
     }
@@ -220,12 +210,9 @@ class PermissionApplication : ComponentActivity() {
         val hasTraditionalPermission = checkTraditionalStoragePermission()
         val hasSAFPermission = checkSAFPermission()
         
-        Log.d("PermissionCheck", "智能存储权限申请 - 传统权限: $hasTraditionalPermission, SAF权限: $hasSAFPermission")
-        
         when {
             hasTraditionalPermission || hasSAFPermission -> {
                 // 任一权限已获得，标记存储权限为已授予并继续
-                Log.d("PermissionCheck", "已有存储权限(${if (hasTraditionalPermission) "传统" else "SAF"})，标记为已授予")
                 // 注意：这里不增加grantedPermissionsCount，因为checkAllPermissions会重新计算
                 checkNextPermission()
             }
@@ -233,11 +220,9 @@ class PermissionApplication : ComponentActivity() {
                 // 两种权限都没有
                 if (shouldUseSAF()) {
                     // 推荐使用SAF
-                    Log.d("PermissionCheck", "无存储权限，申请SAF权限")
                     requestSAFPermission()
                 } else {
                     // 使用传统权限
-                    Log.d("PermissionCheck", "无存储权限，申请传统权限")
                     requestNormalPermission(getStoragePermissions())
                 }
             }
@@ -294,9 +279,7 @@ class PermissionApplication : ComponentActivity() {
         var allGranted = true
         var deniedPermissionName = ""
         
-        Log.d("PermissionCheck", "收到权限申请结果:")
         for ((permission, isGranted) in permissionsResult) {
-            Log.d("PermissionCheck", "权限 $permission: ${if (isGranted) "已授予" else "被拒绝"}")
             if (!isGranted) {
                 allGranted = false
                 deniedPermissionName = getPermissionDisplayName(permission)
@@ -305,12 +288,10 @@ class PermissionApplication : ComponentActivity() {
         }
         
         if (allGranted) {
-            Log.d("PermissionCheck", "权限组申请成功")
             // 强制重新检查所有权限状态
             checkAllPermissions()
             checkNextPermission()
         } else {
-            Log.d("PermissionCheck", "权限申请失败: $deniedPermissionName")
             showPermissionDeniedDialog(deniedPermissionName)
         }
     }
@@ -348,33 +329,21 @@ class PermissionApplication : ComponentActivity() {
         for (permissionInfo in permissions) {
             val isGranted = when (permissionInfo.name) {
                 "悬浮窗权限" -> {
-                    val granted = Settings.canDrawOverlays(this)
-                    Log.d("PermissionCheck", "悬浮窗权限: ${if (granted) "已授予" else "未授予"}")
-                    granted
+                    Settings.canDrawOverlays(this)
                 }
                 "存储权限" -> {
                     // 存储权限特殊处理 - 只要有一种存储权限就行
-                    val granted = checkStoragePermission()
-                    Log.d("PermissionCheck", "存储权限: ${if (granted) "已授予" else "未授予"}")
-                    granted
+                    checkStoragePermission()
                 }
                 else -> {
                     // 其他权限组检查
                     if (permissionInfo.permissions.isEmpty()) {
                         // 无具体权限要求的项目默认为已授予
-                        Log.d("PermissionCheck", "${permissionInfo.name}: 无具体权限要求，视为已授予")
                         true
                     } else {
-                        val allGranted = permissionInfo.permissions.all { permission ->
-                            val granted = ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-                            if (granted) {
-                                Log.d("PermissionCheck", "权限 $permission: 已授予")
-                            } else {
-                                Log.d("PermissionCheck", "权限 $permission: 未授予")
-                            }
-                            granted
+                        permissionInfo.permissions.all { permission ->
+                            ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
                         }
-                        allGranted
                     }
                 }
             }
@@ -384,10 +353,8 @@ class PermissionApplication : ComponentActivity() {
             }
         }
         
-        Log.d("PermissionCheck", "必需权限总数: $totalEssentialPermissions, 已获得: $essentialPermissionsGranted")
         grantedPermissionsCount = essentialPermissionsGranted
         isAllPermissionsGranted = essentialPermissionsGranted >= totalEssentialPermissions
-        Log.d("PermissionCheck", "是否获得所有必需权限: $isAllPermissionsGranted")
     }
     
     /**
@@ -402,7 +369,6 @@ class PermissionApplication : ComponentActivity() {
         val hasSAFPermission = checkSAFPermission()
         
         val result = hasTraditionalPermission || hasSAFPermission
-        Log.d("PermissionCheck", "存储权限检查 - 传统权限: $hasTraditionalPermission, SAF权限: $hasSAFPermission, 最终结果: $result")
         
         return result
     }
@@ -528,12 +494,6 @@ class PermissionApplication : ComponentActivity() {
             )
             
             val persistedPermissions = contentResolver.persistedUriPermissions
-            Log.d("PermissionCheck", "持久化URI权限数量: ${persistedPermissions.size}")
-            
-            // 打印所有持久化权限（用于调试）
-            persistedPermissions.forEachIndexed { index, uriPermission ->
-                Log.d("PermissionCheck", "权限[$index]: ${uriPermission.uri} read:${uriPermission.isReadPermission} write:${uriPermission.isWritePermission}")
-            }
             
             val hasSpecificPermission = persistedPermissions.any { uriPermission ->
                 uriPermission.uri == downloadUri && 
@@ -550,16 +510,13 @@ class PermissionApplication : ComponentActivity() {
             }
             
             val result = hasSpecificPermission || canAccessDownload
-            Log.d("PermissionCheck", "SAF权限检查 - 特定URI: $hasSpecificPermission, 目录访问: $canAccessDownload, 最终结果: $result")
             result
         } catch (e: Exception) {
-            Log.e("PermissionCheck", "SAF权限检查异常: ${e.message}")
             // 回退到传统文件访问检查
             try {
                 val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 downloadDir?.exists() == true && downloadDir.listFiles()?.isNotEmpty() ?: false
             } catch (ex: Exception) {
-                Log.e("PermissionCheck", "回退检查也失败: ${ex.message}")
                 false
             }
         }
@@ -583,14 +540,12 @@ class PermissionApplication : ComponentActivity() {
         // 停止所有后台检查
         stopPeriodicPermissionCheck()
         cancelPermissionTimeout()
-        Log.d("PermissionCheck", "PermissionApplication已销毁")
     }
     
     override fun onPause() {
         super.onPause()
         // 页面不可见时暂停周期性检查以节省性能
         periodicCheckHandler?.removeCallbacksAndMessages(null)
-        Log.d("PermissionCheck", "页面暂停，暂停周期性检查")
     }
     
     override fun onResume() {
@@ -598,7 +553,6 @@ class PermissionApplication : ComponentActivity() {
         // 页面恢复可见时重新启动检查（如果还需要的话）
         if (!isAllPermissionsGranted && periodicCheckHandler == null) {
             startPeriodicPermissionCheck()
-            Log.d("PermissionCheck", "页面恢复，重新启动周期性检查")
         }
     }
 }

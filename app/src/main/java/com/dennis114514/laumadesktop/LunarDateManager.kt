@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.Log
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -24,7 +24,7 @@ import java.util.*
  * 用于查询和获取农历日期信息
  */
 object LunarDateManager {
-    private const val TAG = "LunarDateManager"
+    
     private const val API_TOKEN = "LwExDtUWhF3rH5ib"
     private const val API_URL = "https://v2.alapi.cn/api/lunar"
     
@@ -41,7 +41,6 @@ object LunarDateManager {
                 init(null, trustAllCerts, SecureRandom())
             }
         } catch (e: Exception) {
-            Log.e(TAG, "SSL上下文初始化失败", e)
             SSLContext.getDefault()
         }
     }
@@ -82,7 +81,6 @@ object LunarDateManager {
         try {
             // 检查网络连接
             if (!isNetworkAvailable(context)) {
-                Log.e(TAG, "网络不可用")
                 return@withContext LunarDateInfo(isValid = false)
             }
             
@@ -127,12 +125,12 @@ object LunarDateManager {
                     }
                 }
             } else {
-                Log.e(TAG, "API请求失败，响应码: $responseCode")
+                // API请求失败
             }
             
             connection.disconnect()
         } catch (e: Exception) {
-            Log.e(TAG, "获取农历日期失败", e)
+            // 获取农历日期失败
         }
         
         // 返回默认的无效数据

@@ -168,7 +168,7 @@ class InitializeProvider : ComponentActivity() {
                     try {
                         // 添加调试信息
                         val assetFiles = assets.list("")
-                        println("Assets文件列表: ${assetFiles?.joinToString(", ")}")
+                        // Assets文件列表信息
                         
                         copyAssetFile("ContractInformation.json", contactInfoFile)
                         updateProgress(0.87f, "ContractInformation.json复制完成")
@@ -176,13 +176,13 @@ class InitializeProvider : ComponentActivity() {
                         
                         // 验证复制结果
                         if (contactInfoFile.exists()) {
-                            println("ContractInformation.json文件已创建，大小: ${contactInfoFile.length()} 字节")
+                            // ContractInformation.json文件已创建
                         } else {
                             throw Exception("文件未成功创建")
                         }
                     } catch (e: Exception) {
                         val errorMsg = "复制ContractInformation.json失败: ${e.message}"
-                        println(errorMsg)
+                        // 错误信息
                         throw Exception(errorMsg)
                     }
                     
@@ -194,13 +194,13 @@ class InitializeProvider : ComponentActivity() {
                         
                         // 验证复制结果
                         if (readmeFile.exists()) {
-                            println("README.txt文件已创建，大小: ${readmeFile.length()} 字节")
+                            // README.txt文件已创建
                         } else {
                             throw Exception("README文件未成功创建")
                         }
                     } catch (e: Exception) {
                         val errorMsg = "复制README.txt失败: ${e.message}"
-                        println(errorMsg)
+                        // 错误信息
                         throw Exception(errorMsg)
                     }
                 }
@@ -221,8 +221,7 @@ class InitializeProvider : ComponentActivity() {
                 }
                 
             } catch (e: Exception) {
-                println("初始化过程发生异常: ${e.javaClass.simpleName}: ${e.message}")
-                e.printStackTrace()
+                // 初始化过程发生异常
                 runOnUiThread {
                     val errorMessage = "初始化失败: ${e.message ?: "未知错误"}"
                     Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
@@ -248,7 +247,7 @@ class InitializeProvider : ComponentActivity() {
      */
     private fun copyAssetFile(assetName: String, targetFile: File) {
         try {
-            println("开始复制文件: $assetName 到 ${targetFile.absolutePath}")
+            // 开始复制文件
             
             // 检查assets中是否存在该文件
             val assetList = assets.list("")
@@ -263,13 +262,13 @@ class InitializeProvider : ComponentActivity() {
                 if (!parentDir.mkdirs()) {
                     throw Exception("无法创建目标目录: ${parentDir.absolutePath}")
                 }
-                println("创建目录: ${parentDir.absolutePath}")
+                // 创建目录
             }
             
             // 如果目标文件已存在，先删除
             if (targetFile.exists()) {
                 targetFile.delete()
-                println("删除已存在的文件: ${targetFile.absolutePath}")
+                // 删除已存在的文件
             }
             
             // 执行文件复制
@@ -283,7 +282,7 @@ class InitializeProvider : ComponentActivity() {
                         totalBytes += bytesRead
                     }
                     outputStream.flush()
-                    println("复制完成: $assetName，总字节数: $totalBytes")
+                    // 复制完成
                 }
             }
             
@@ -296,11 +295,10 @@ class InitializeProvider : ComponentActivity() {
                 throw Exception("文件复制后大小为0: ${targetFile.absolutePath}")
             }
             
-            println("文件复制验证通过: ${targetFile.absolutePath}，大小: ${targetFile.length()} 字节")
+            // 文件复制验证通过
             
         } catch (e: Exception) {
-            println("复制文件 $assetName 失败: ${e.message}")
-            e.printStackTrace()
+            // 复制文件失败
             throw Exception("复制文件 $assetName 失败: ${e.message}")
         }
     }

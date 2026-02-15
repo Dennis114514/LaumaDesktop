@@ -325,7 +325,7 @@ suspend fun loadDesktopApps(context: android.content.Context): List<InstalledApp
             }
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        // 忽略异常
     }
     
     // 按应用名称排序

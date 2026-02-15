@@ -329,7 +329,7 @@ suspend fun loadQuickStartApps(context: android.content.Context): List<QuickStar
             }
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        // 忽略异常
     }
     
     // 按应用名称排序

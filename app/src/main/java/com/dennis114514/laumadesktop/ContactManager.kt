@@ -1,7 +1,6 @@
 package com.dennis114514.laumadesktop
 
 import android.os.Environment
-import android.util.Log
 import com.dennis114514.laumadesktop.model.ContactInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -31,7 +30,6 @@ object ContactManager {
     private fun getImagesDirPath(): String {
         val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val imagesDir = File(downloadDir, "LaumaDesktop/Images").absolutePath
-        Log.d("ContactManager", "图片目录路径: $imagesDir, 目录存在: ${File(imagesDir).exists()}")
         return imagesDir
     }
     
@@ -42,21 +40,15 @@ object ContactManager {
     suspend fun loadContacts(): List<ContactInfo> = withContext(Dispatchers.IO) {
         try {
             val filePath = getContactInfoFilePath()
-            Log.d("ContactManager", "尝试读取联系人文件: $filePath")
             
             val contactFile = File(filePath)
             if (!contactFile.exists()) {
-                Log.w("ContactManager", "联系人文件不存在: $filePath")
                 return@withContext emptyList()
             }
-            
-            Log.d("ContactManager", "文件存在，大小: ${contactFile.length()} 字节")
             
             val inputStream = FileInputStream(contactFile)
             val jsonString = inputStream.bufferedReader().use { it.readText() }
             inputStream.close()
-            
-            Log.d("ContactManager", "读取到的JSON内容: $jsonString")
             
             val jsonArray = JSONArray(jsonString)
             val contacts = mutableListOf<ContactInfo>()
@@ -70,15 +62,10 @@ object ContactManager {
                     image = jsonObject.optString("Image", ""),
                     audio = jsonObject.optString("Audio", "")
                 )
-                Log.d("ContactManager", "加载联系人: ${contact.name}, 图片: ${contact.image}")
                 contacts.add(contact)
             }
-            
-            Log.d("ContactManager", "总共加载了 ${contacts.size} 个联系人")
             contacts
         } catch (e: Exception) {
-            Log.e("ContactManager", "加载联系人失败", e)
-            e.printStackTrace()
             emptyList()
         }
     }
@@ -90,7 +77,6 @@ object ContactManager {
      */
     fun getContactImagePath(imageName: String): String? {
         if (imageName.isBlank()) {
-            Log.w("ContactManager", "图片文件名为空")
             return null
         }
         
@@ -98,13 +84,9 @@ object ContactManager {
         val imagePath = File(imagesDir, imageName).absolutePath
         val imageFile = File(imagePath)
         
-        Log.d("ContactManager", "解析图片路径 - 文件名: $imageName, 图片目录: $imagesDir, 完整路径: $imagePath, 文件存在: ${imageFile.exists()}")
-        
         return if (imageFile.exists()) {
-            Log.d("ContactManager", "图片文件存在: $imagePath")
             imagePath
         } else {
-            Log.w("ContactManager", "图片文件不存在: $imagePath")
             null
         }
     }

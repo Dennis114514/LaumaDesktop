@@ -377,7 +377,7 @@ suspend fun loadInstalledApps(context: Context): List<AppInfo> = withContext(Dis
             apps.add(AppInfo(appName, packageName, icon))
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        // 忽略异常
     }
     
     // 按应用名称排序
