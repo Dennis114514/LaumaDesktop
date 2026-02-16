@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.dennis114514.laumadesktop.FirstUseGuide.ui.theme.LaumaDesktopTheme
+import android.os.Looper
+
 
 class PermissionApplication : ComponentActivity() {
     
@@ -209,21 +211,30 @@ class PermissionApplication : ComponentActivity() {
     private fun requestSmartStoragePermission() {
         val hasTraditionalPermission = checkTraditionalStoragePermission()
         val hasSAFPermission = checkSAFPermission()
+        val hasManageExternalStoragePermission = checkManageExternalStoragePermission()
         
         when {
-            hasTraditionalPermission || hasSAFPermission -> {
+            hasTraditionalPermission || hasSAFPermission || hasManageExternalStoragePermission -> {
                 // 任一权限已获得，标记存储权限为已授予并继续
                 // 注意：这里不增加grantedPermissionsCount，因为checkAllPermissions会重新计算
                 checkNextPermission()
             }
             else -> {
-                // 两种权限都没有
-                if (shouldUseSAF()) {
-                    // 推荐使用SAF
-                    requestSAFPermission()
-                } else {
-                    // 使用传统权限
-                    requestNormalPermission(getStoragePermissions())
+                // 所有权限都没有
+                val storagePermissions = getStoragePermissions()
+                when {
+                    storagePermissions.contains("android.permission.MANAGE_EXTERNAL_STORAGE") -> {
+                        // Android 10，申请MANAGE_EXTERNAL_STORAGE权限
+                        requestManageExternalStoragePermission()
+                    }
+                    shouldUseSAF() -> {
+                        // 推荐使用SAF
+                        requestSAFPermission()
+                    }
+                    else -> {
+                        // 使用传统权限
+                        requestNormalPermission(storagePermissions)
+                    }
                 }
             }
         }
@@ -231,12 +242,110 @@ class PermissionApplication : ComponentActivity() {
     
     private fun requestNormalPermission(permissionArray: Array<String>) {
         if (permissionArray.isNotEmpty()) {
-            // 启动超时保护
-            startPermissionTimeout()
-            requestPermissionLauncher.launch(permissionArray)
+            // 检查是否包含MANAGE_EXTERNAL_STORAGE权限
+            if (permissionArray.contains("android.permission.MANAGE_EXTERNAL_STORAGE")) {
+                // 申请MANAGE_EXTERNAL_STORAGE权限
+                requestManageExternalStoragePermission()
+            } else {
+                // 启动超时保护
+                startPermissionTimeout()
+                requestPermissionLauncher.launch(permissionArray)
+            }
         } else {
             // 如果没有需要申请的权限，直接检查下一个
             checkNextPermission()
+        }
+    }
+    
+    /**
+     * 申请MANAGE_EXTERNAL_STORAGE权限
+     */
+    private fun requestManageExternalStoragePermission() {
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                // Android 11及以上使用Environment.isExternalStorageManager()检查
+                if (!Environment.isExternalStorageManager()) {
+                    try {
+                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                            data = Uri.parse("package:$packageName")
+                        }
+                        // 启动超时保护
+                        startPermissionTimeout()
+                        manageExternalStorageLauncher.launch(intent)
+                    } catch (e: Exception) {
+                        // 如果新API不可用，回退到传统权限申请
+                        requestFallbackStoragePermission()
+                    }
+                } else {
+                    // 已有权限，继续下一个
+                    checkNextPermission()
+                }
+            }
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> {
+                // Android 10使用系统设置页面申请MANAGE_EXTERNAL_STORAGE权限
+                try {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.parse("package:$packageName")
+                    }
+                    Toast.makeText(this, "请在应用详情中开启'允许访问所有文件'权限", Toast.LENGTH_LONG).show()
+                    // 启动超时保护
+                    startPermissionTimeout()
+                    manageExternalStorageLauncher.launch(intent)
+                } catch (e: Exception) {
+                    // 如果无法打开系统设置，回退到传统权限申请
+                    requestFallbackStoragePermission()
+                }
+            }
+            else -> {
+                // Android 10以下版本使用传统方式申请存储权限
+                requestFallbackStoragePermission()
+            }
+        }
+    }
+    
+    /**
+     * 回退到传统存储权限申请
+     */
+    private fun requestFallbackStoragePermission() {
+        val traditionalPermissions = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        // 启动超时保护
+        startPermissionTimeout()
+        requestPermissionLauncher.launch(traditionalPermissions)
+    }
+    
+    // MANAGE_EXTERNAL_STORAGE权限申请回调
+    private val manageExternalStorageLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // 取消超时保护
+        cancelPermissionTimeout()
+        
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                if (Environment.isExternalStorageManager()) {
+                    // 权限获取成功
+                    checkAllPermissions()
+                    checkNextPermission()
+                } else {
+                    showPermissionDeniedDialog("所有文件访问权限")
+                }
+            }
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> {
+                // Android 10需要重新检查权限状态
+                // 由于是通过系统设置页面申请，需要用户手动确认
+                android.os.Handler(Looper.getMainLooper()).postDelayed({
+                    checkAllPermissions()
+                    checkNextPermission()
+                }, 1000) // 延迟1秒检查，给系统时间更新权限状态
+            }
+            else -> {
+                // Android 10以下版本回退到传统权限检查
+                checkAllPermissions()
+                checkNextPermission()
+            }
         }
     }
     
@@ -359,7 +468,7 @@ class PermissionApplication : ComponentActivity() {
     
     /**
      * 检查存储权限
-     * @return 是否具有存储权限（SAF或传统权限任一即可）
+     * @return 是否具有存储权限（SAF、传统权限或MANAGE_EXTERNAL_STORAGE任一即可）
      */
     private fun checkStoragePermission(): Boolean {
         // 检查传统存储权限
@@ -368,7 +477,10 @@ class PermissionApplication : ComponentActivity() {
         // 检查SAF权限
         val hasSAFPermission = checkSAFPermission()
         
-        val result = hasTraditionalPermission || hasSAFPermission
+        // 检查MANAGE_EXTERNAL_STORAGE权限
+        val hasManageExternalStoragePermission = checkManageExternalStoragePermission()
+        
+        val result = hasTraditionalPermission || hasSAFPermission || hasManageExternalStoragePermission
         
         return result
     }
@@ -383,8 +495,60 @@ class PermissionApplication : ComponentActivity() {
             // Android 5.x及以下无需检查
             true
         } else {
-            storagePermissions.all { permission ->
-                ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+            // 检查是否包含MANAGE_EXTERNAL_STORAGE权限
+            if (storagePermissions.contains("android.permission.MANAGE_EXTERNAL_STORAGE")) {
+                // Android 10的MANAGE_EXTERNAL_STORAGE权限检查
+                checkManageExternalStoragePermission()
+            } else {
+                // 传统存储权限检查
+                storagePermissions.all { permission ->
+                    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+                }
+            }
+        }
+    }
+    
+    /**
+     * 检查MANAGE_EXTERNAL_STORAGE权限
+     * @return 是否具有MANAGE_EXTERNAL_STORAGE权限
+     */
+    @Suppress("DEPRECATION")
+    private fun checkManageExternalStoragePermission(): Boolean {
+        return when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                // Android 11及以上使用新的API
+                Environment.isExternalStorageManager()
+            }
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> {
+                // Android 10特殊情况处理
+                // 首先检查是否有MANAGE_EXTERNAL_STORAGE权限
+                try {
+                    val hasManagePermission = checkSelfPermission("android.permission.MANAGE_EXTERNAL_STORAGE") == PackageManager.PERMISSION_GRANTED
+                    if (hasManagePermission) {
+                        return true
+                    }
+                } catch (e: Exception) {
+                    // 忽略异常，继续检查传统权限
+                }
+                
+                // 如果没有MANAGE_EXTERNAL_STORAGE权限，检查传统存储权限
+                val traditionalPermissions = arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                traditionalPermissions.all { permission ->
+                    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+                }
+            }
+            else -> {
+                // Android 10以下版本，检查传统存储权限
+                val traditionalPermissions = arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                traditionalPermissions.all { permission ->
+                    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+                }
             }
         }
     }
@@ -417,8 +581,13 @@ class PermissionApplication : ComponentActivity() {
                 // Android 11及以上，使用READ_EXTERNAL_STORAGE
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             }
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.Q -> {
+                // Android 10，优先使用MANAGE_EXTERNAL_STORAGE
+                // 但由于requestLegacyExternalStorage=true，也可以使用传统权限作为备选
+                arrayOf("android.permission.MANAGE_EXTERNAL_STORAGE")
+            }
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                // Android 6.0-10，使用传统存储权限
+                // Android 6.0-9，使用传统存储权限
                 arrayOf(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
